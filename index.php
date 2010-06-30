@@ -1,6 +1,6 @@
 <?php
 
-require_once('../../../config.php');
+require_once(dirname(__FILE__).'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $roles_ids = optional_param('roles_ids');
@@ -8,7 +8,9 @@ $repeat_each = optional_param('repeat_each', 20, PARAM_INT);
 
 admin_externalpage_setup('reportrolescapabilities');
 $CFG->stylesheets[] = $CFG->wwwroot.'/admin/report/rolescapabilities/styles.css';
-admin_externalpage_print_header();
+
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('rolescapabilities', 'report_rolescapabilities'));
 
 echo '<div id="legend_container">',
        '<h3>', get_string('legend_title', 'report_rolescapabilities'), '</h3>',
@@ -35,7 +37,7 @@ $sql = "SELECT id, name
           FROM {$CFG->prefix}role
          WHERE id IN ({$CFG->report_rolescapabilities_available_roles})
       ORDER BY sortorder ASC";
-$available_roles = get_records_sql($sql);
+$available_roles = $DB->get_records_sql($sql);
 
 if (!empty($available_roles)) {
     foreach ($available_roles as $rid => $r) {
@@ -65,7 +67,7 @@ if (empty($roles_ids)) {
              WHERE id IN ({$roles_list})
           ORDER BY sortorder";
 
-    $roles = get_records_sql($sql);
+    $roles = $DB->get_records_sql($sql);
 
     echo '<table id="roles_capabilities">';
 
@@ -98,10 +100,10 @@ if (empty($roles_ids)) {
     echo '</table>';
 }
 
-admin_externalpage_print_footer();
+echo $OUTPUT->footer();
 
 function get_moodle_capabilities($roles) {
-    global $CFG;
+    global $CFG, $DB;
 
     $sql = "SELECT id, name, component, contextlevel, riskbitmask
               FROM {$CFG->prefix}capabilities
@@ -109,7 +111,7 @@ function get_moodle_capabilities($roles) {
           ORDER BY contextlevel, name";
 
     // first, all capabilities
-    $records = get_records_sql($sql);
+    $records = $DB->get_records_sql($sql);
     $capabilities = array();
     foreach ($records as $cap) {
         $capabilities[$cap->name] = array('component' => $cap->component,
@@ -130,7 +132,7 @@ function get_moodle_capabilities($roles) {
                    AND rc.capability NOT LIKE 'moodle/legacy%'
               ORDER BY c.contextlevel,c.name";
 
-        $records = get_records_sql($sql);
+        $records = $DB->get_records_sql($sql);
 
         foreach ($records as $capability) {
             $capabilities[$capability->capability][$role->shortname] = $capability->permission;

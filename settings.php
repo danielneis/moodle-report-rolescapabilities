@@ -1,6 +1,6 @@
 <?php
 
-$records = get_records('role', '', 'sortorder ASC', 'id,name');
+$records = $DB->get_records('role', '', 'sortorder ASC', 'id,name');
 $roles = array();
 foreach ($records as $r) {
     $roles[$r->id] = $r->name;
@@ -17,5 +17,3 @@ $ADMIN->add('reports',
                                    get_string('rolescapabilities', 'report_rolescapabilities'),
                                    "{$CFG->wwwroot}/{$CFG->admin}/report/rolescapabilities/index.php",
                                    'report/rolescapabilities:view'));
-
-?>

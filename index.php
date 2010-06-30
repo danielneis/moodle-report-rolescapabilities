@@ -7,8 +7,8 @@ $roles_ids = optional_param('roles_ids');
 $repeat_each = optional_param('repeat_each', 20, PARAM_INT);
 
 admin_externalpage_setup('reportrolescapabilities');
-$CFG->stylesheets[] = $CFG->wwwroot.'/admin/report/rolescapabilities/styles.css';
 
+$PAGE->requires->css('/admin/report/rolescapabilities/styles.css');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('rolescapabilities', 'report_rolescapabilities'));
 
@@ -29,9 +29,6 @@ echo '<div id="legend_container">',
        '</dl>',
      '</div>';
 
-echo '<div id="options_container">',
-     '<form action="index.php" method="post">',
-     '<select multiple="multiple" name="roles_ids[]" size="10" id="roles_ids">';
 
 $sql = "SELECT id, name 
           FROM {$CFG->prefix}role
@@ -39,25 +36,33 @@ $sql = "SELECT id, name
       ORDER BY sortorder ASC";
 $available_roles = $DB->get_records_sql($sql);
 
-if (!empty($available_roles)) {
-    foreach ($available_roles as $rid => $r) {
-        $selected = '';
-        if (!empty($roles_ids)) {
-            $selected = in_array($rid, $roles_ids) ? 'selected="selected"' : '';
-        }
-        echo "<option value=\"{$rid}\" {$selected}>{$r->name}</option>";
-    }
+if (empty($available_roles)) {
+    echo $OUTPUT->heading(get_string('no_roles_available', 'report_rolescapabilities'));
 }
+
+echo '<div id="options_container">',
+     '<form action="index.php" method="post">',
+     '<select multiple="multiple" name="roles_ids[]" size="10" id="roles_ids">';
+
+foreach ($available_roles as $rid => $r) {
+    $selected = '';
+    if (!empty($roles_ids)) {
+        $selected = in_array($rid, $roles_ids) ? 'selected="selected"' : '';
+    }
+    echo "<option value=\"{$rid}\" {$selected}>{$r->name}</option>";
+}
+
 echo '</select>',
      '<p>',
          '<label for="repeat_each">', get_string('repeat_each', 'report_rolescapabilities'), '</label>',
          '<input type="text" id="repeat_each" name="repeat_each" value="', $repeat_each, '" size="2" />',
      '</p>',
-     '<input type="submit" value="', get_string('show'), '">',
-     '</form></div>';
+     '<input type="submit" value="', get_string('show'), '" />',
+     '</form>',
+     '</div>';
 
 if (empty($roles_ids)) {
-    print_heading(get_string('no_roles_selected', 'report_rolescapabilities'));
+    echo $OUTPUT->heading(get_string('no_roles_selected', 'report_rolescapabilities'));
 } else {
 
     $roles_list = implode(',', $roles_ids);

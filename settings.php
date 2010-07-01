@@ -1,6 +1,6 @@
 <?php
 
-$records = $DB->get_records('role', '', 'sortorder ASC', 'id,name');
+$records = $DB->get_records('role',  array(), 'sortorder ASC', 'id,name');
 $roles = array();
 foreach ($records as $r) {
     $roles[$r->id] = $r->name;

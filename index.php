@@ -2,6 +2,7 @@
 
 require_once(dirname(__FILE__).'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->dirroot.'/admin/roles/lib.php');
 
 $roles_ids = optional_param('roles_ids');
 $repeat_each = optional_param('repeat_each', 20, PARAM_INT);
@@ -28,6 +29,93 @@ echo '<div id="legend_container">',
          '<dd>', get_string('prohibit', 'role'), '</dd>',
        '</dl>',
      '</div>';
+
+class rolescapabilities_table extends capability_table_base {
+
+    public function __construct($context, $id, $roleids, $repeat_each) {
+        global $DB;
+
+        parent::__construct($context, $id);
+
+        $this->allrisks = get_all_risks();
+        $this->risksurl = get_docs_url(s(get_string('risks', 'role')));
+
+        $this->allpermissions = array(
+            CAP_INHERIT => 'inherit',
+            CAP_ALLOW => 'allow',
+            CAP_PREVENT => 'prevent' ,
+            CAP_PROHIBIT => 'prohibit',
+        );
+
+        $this->strperms = array();
+        foreach ($this->allpermissions as $permname) {
+            $this->strperms[$permname] =  get_string($permname, 'role');
+        }
+
+        $this->repeat_each = $repeat_each;
+
+        $roles_list = implode(',', $roleids);
+        $sql = "SELECT id,shortname, name
+                  FROM {$CFG->prefix}role
+                 WHERE id IN ({$roles_list})
+              ORDER BY sortorder";
+        $this->roles = $DB->get_records_sql($sql);
+
+    }
+
+    protected function add_header_cells() {
+        $th = '<th>' . get_string('allowed', 'role') . '</th>';
+        foreach ($this->roles as $rid => $r) {
+            $th .= "<th class=\"role\">{$r->name}</th>";
+        }
+        $th .= '<th class="name" align="left" scope="col">'.get_string('capability','role').'</th>';
+        echo $th;
+    }
+
+    protected function num_extra_columns() {
+        return sizeof($this->roles) + 1;
+    }
+
+    protected function add_row_cells($capability) {
+        $capabilities = array_chunk(get_moodle_capabilities($this->roles), $this->repeat_each);
+        $this->add_header_cells();
+        foreach ($capabilities as $chunk) {
+
+            foreach ($chunk as $capability) {
+
+                $cap_string = get_cap_string($capability);
+                echo '<tr>', $cap_string;
+                foreach ($roles as $role) {
+                    if (isset($capability[$role->shortname])) {
+                        echo '<td class="role cap_', $capability[$role->shortname] , '">';
+                    } else {
+                        echo '<td class="role cap_not_set">';
+                    }
+                    echo '</td>';
+                }   
+                echo $cap_string, '</tr>';
+            }
+        }
+    }
+
+    /**
+     * Print a risk icon, as a link to the Risks page on Moodle Docs.
+     *
+     * @param string $type the type of risk, will be one of the keys from the
+     *      get_all_risks array. Must start with 'risk'.
+     */
+    function get_risk_icon($type) {
+        global $OUTPUT;
+        if (!isset($this->riskicons[$type])) {
+            $iconurl = $OUTPUT->pix_url('i/' . str_replace('risk', 'risk_', $type));
+            $text = '<img src="' . $iconurl . '" alt="' . get_string($type . 'short', 'admin') . '" />';
+            $action = new popup_action('click', $this->risksurl, 'docspopup');
+            $this->riskicons[$type] = $OUTPUT->action_link($this->risksurl, $text, $action, array('title'=>get_string($type, 'admin')));
+        }
+        return $this->riskicons[$type];
+    }
+}
+
 
 
 $sql = "SELECT id, name 
@@ -65,43 +153,10 @@ if (empty($roles_ids)) {
     echo $OUTPUT->heading(get_string('no_roles_selected', 'report_rolescapabilities'));
 } else {
 
-    $roles_list = implode(',', $roles_ids);
+    $report = new rolescapabilities_table(get_context_instance(CONTEXT_SYSTEM), 0, $roles_ids, $repeat_each);
 
-    $sql = "SELECT id,shortname, name
-              FROM {$CFG->prefix}role
-             WHERE id IN ({$roles_list})
-          ORDER BY sortorder";
+    $report->display();
 
-    $roles = $DB->get_records_sql($sql);
-
-    echo '<table id="roles_capabilities">';
-
-    $th = '<tr><th class="action">'.get_string('capability','role').'</th>'; 
-    foreach ($roles as $rid => $r) {
-        $th .= "<th class=\"role\">{$r->name}</th>";
-    }
-    $th .= '<th class="action">'.get_string('capability','role').'</th></tr>';
-
-    $capabilities = array_chunk(get_moodle_capabilities($roles), $repeat_each);
-    foreach ($capabilities as $chunk) {
-
-        echo $th;
-
-        foreach ($chunk as $capability) {
-
-            $cap_string = get_cap_string($capability);
-            echo '<tr>', $cap_string;
-            foreach ($roles as $role) {
-                if (isset($capability[$role->shortname])) {
-                    echo '<td class="role cap_', $capability[$role->shortname] , '">';
-                } else {
-                    echo '<td class="role cap_not_set">';
-                }
-                echo '</td>';
-            }   
-            echo $cap_string, '</tr>';
-        }
-    }
     echo '</table>';
 }
 
@@ -146,53 +201,4 @@ function get_moodle_capabilities($roles) {
     return $capabilities;
 }
 
-function get_cap_string($capability) {
-    global $CFG;
-
-    $doc_ref = 'http://docs.moodle.org/'.$CFG->lang.'/Capabilities/'.$capability['name'];
-    return "<td class=\"action\">
-             <span class=\"cap_friendly_name\"><a href=\"{$doc_ref}\">".get_capability_string($capability['name'])."</a></span>
-             <span class=\"cap_name\">{$capability['name']}</span>".
-             get_risks_images($capability).
-           '</td>';
-}
-
-function get_risks_images($capability) {
-    global $CFG;
-
-    $strrisks = s(get_string('risks', 'role'));
-    $riskinfo = '<span class="risk managetrust">';
-    $rowclasses = '';
-    if (RISK_MANAGETRUST & (int)$capability['riskbitmask']) {
-        $riskinfo .= '<a onclick="this.target=\'docspopup\'" title="'.get_string('riskmanagetrust', 'admin').'" href="'.$CFG->docroot.'/'.$CFG->lang.'/'.$strrisks.'">';
-        $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_managetrust.gif" alt="'.get_string('riskmanagetrustshort', 'admin').'" /></a>';
-        $rowclasses .= ' riskmanagetrust';
-    }
-    $riskinfo .= '</span><span class="risk config">';
-    if (RISK_CONFIG & (int)$capability['riskbitmask']) {
-        $riskinfo .= '<a onclick="this.target=\'docspopup\'" title="'.get_string('riskconfig', 'admin').'" href="'.$CFG->docroot.'/'.$CFG->lang.'/'.$strrisks.'">';
-        $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_config.gif" alt="'.get_string('riskconfigshort', 'admin').'" /></a>';
-        $rowclasses .= ' riskconfig';
-    }
-    $riskinfo .= '</span><span class="risk xss">';
-    if (RISK_XSS & (int)$capability['riskbitmask']) {
-        $riskinfo .= '<a onclick="this.target=\'docspopup\'" title="'.get_string('riskxss', 'admin').'" href="'.$CFG->docroot.'/'.$CFG->lang.'/'.$strrisks.'">';
-        $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_xss.gif" alt="'.get_string('riskxssshort', 'admin').'" /></a>';
-        $rowclasses .= ' riskxss';
-    }
-    $riskinfo .= '</span><span class="risk personal">';
-    if (RISK_PERSONAL & (int)$capability['riskbitmask']) {
-        $riskinfo .= '<a onclick="this.target=\'docspopup\'" title="'.get_string('riskpersonal', 'admin').'" href="'.$CFG->docroot.'/'.$CFG->lang.'/'.$strrisks.'">';
-        $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_personal.gif" alt="'.get_string('riskpersonalshort', 'admin').'" /></a>';
-        $rowclasses .= ' riskpersonal';
-    }
-    $riskinfo .= '</span><span class="risk spam">';
-    if (RISK_SPAM & (int)$capability['riskbitmask']) {
-        $riskinfo .= '<a onclick="this.target=\'docspopup\'" title="'.get_string('riskspam', 'admin').'" href="'.$CFG->docroot.'/'.$CFG->lang.'/'.$strrisks.'">';
-        $riskinfo .= '<img src="'.$CFG->pixpath.'/i/risk_spam.gif" alt="'.get_string('riskspamshort', 'admin').'" /></a>';
-        $rowclasses .= ' riskspam';
-    }
-    $riskinfo .= '</span>';
-    return $riskinfo;
-}
 ?>

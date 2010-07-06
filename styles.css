@@ -1,20 +1,21 @@
+#page-admin-report-rolescapabilities-index h2.main {
+    clear: both;
+}
+
 #page-admin-report-rolescapabilities-index #legend_container {
     float: left;
-    width: 45%;
+    width: 35%;
 }
 
 #page-admin-report-rolescapabilities-index #options_container {
     float: right;
-    width : 45%;
+    width : 60%;
 }
 
 #page-admin-report-rolescapabilities-index #options_container #repeat_each {
     display: inline;
-    margin-left: 1em;
-}
-
-#page-admin-report-rolescapabilities-index #middle-column h2 {
-    clear: both;
+    margin-left: 0.5em;
+    margin-right: 1em;
 }
 
 #page-admin-report-rolescapabilities-index #legend dt {
@@ -30,72 +31,35 @@
     border: 1px solid black;
 }
 
-#page-admin-report-rolescapabilities-index #roles_capabilities {
+#page-admin-report-rolescapabilities-index .rolecap {
     clear: both;
     margin-top: 25px;
     border: 1px solid black;
     border-collapse: collapse;
-    font-size: 75%;
-    width: 100%;
 }
 
-#page-admin-report-rolescapabilities-index #roles_capabilities th,
-#page-admin-report-rolescapabilities-index #roles_capabilities td {
+#page-admin-report-rolescapabilities-index .rolecap th,
+#page-admin-report-rolescapabilities-index .rolecap td {
     border: 1px solid black;
-    border-collapse: collapse;
 }
 
-#page-admin-report-rolescapabilities-index #roles_capabilities th {
-    background-color: #ffe4b9;
-    padding: 3px;
-}
-
-#page-admin-report-rolescapabilities-index #roles_capabilities td {
-    padding: 3px;
-}
-
-#page-admin-report-rolescapabilities-index #roles_capabilities .action {
-    width: 20%;
-}
-
-#page-admin-report-rolescapabilities-index #roles_capabilities .role {
-    width: 6%;
-}
-
-#page-admin-report-rolescapabilities-index #roles_capabilities .component_name td {
-    font-weight: bold;
-    font-size: 125%;
-    padding: 10px 5px;
-    background-color: #ddd;
-}
-
-#page-admin-report-rolescapabilities-index #roles_capabilities td span.cap_friendly_name {
-    display: block;
-    font-weight: bold;
-}
-
-#page-admin-report-rolescapabilities-index #roles_capabilities td span.cap_name {
-    display: block;
-    font-size: 95%;
-}
-
-#page-admin-report-rolescapabilities-index #roles_capabilities td.cap_not_set,
+#page-admin-report-rolescapabilities-index .rolecap td.cap_not_set,
 #page-admin-report-rolescapabilities-index #legend dt span.not_set {
     background-color: white;
     text-align: center;
 }
 
-#page-admin-report-rolescapabilities-index #roles_capabilities td.cap_1,
+#page-admin-report-rolescapabilities-index .rolecap td.cap_1,
 #page-admin-report-rolescapabilities-index #legend dt span.allow {
     background-color: green;
 }
 
-#page-admin-report-rolescapabilities-index #roles_capabilities td.cap_-1,
+#page-admin-report-rolescapabilities-index .rolecap td.cap_-1,
 #page-admin-report-rolescapabilities-index #legend dt span.prevent {
     background-color: yellow;
 }
 
-#page-admin-report-rolescapabilities-index #roles_capabilities td.cap_-1000,
+#page-admin-report-rolescapabilities-index .rolecap td.cap_-1000,
 #page-admin-report-rolescapabilities-index #legend dt span.deny {
     background-color: red;
 }

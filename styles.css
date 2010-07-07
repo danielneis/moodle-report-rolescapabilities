@@ -33,7 +33,7 @@
 
 #page-admin-report-rolescapabilities-index .rolecap {
     clear: both;
-    margin-top: 25px;
+    margin-top: 1em;
     border: 1px solid black;
     border-collapse: collapse;
 }

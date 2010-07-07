@@ -30,11 +30,12 @@ echo '<div id="legend_container">',
        '</dl>',
      '</div>';
 
+list($usql, $params) = $DB->get_in_or_equal(explode(',',$CFG->report_rolescapabilities_available_roles));
 $sql = "SELECT id, name
-          FROM {$CFG->prefix}role
-         WHERE id IN ({$CFG->report_rolescapabilities_available_roles})
+          FROM {role}
+         WHERE id $usql
       ORDER BY sortorder ASC";
-$available_roles = $DB->get_records_sql($sql);
+$available_roles = $DB->get_records_sql($sql, $params);
 
 
 echo '<div id="options_container">',
@@ -86,12 +87,12 @@ class rolescapabilities_table extends capability_table_base {
 
         $this->repeat_each = $repeat_each;
 
-        $roles_list = implode(',', $roleids);
+        list($usql, $params) = $DB->get_in_or_equal($roleids);
         $sql = "SELECT id,shortname, name
-                  FROM {$CFG->prefix}role
-                 WHERE id IN ({$roles_list})
+                  FROM {role}
+                 WHERE id {$usql}
               ORDER BY sortorder";
-        $this->roles = $DB->get_records_sql($sql);
+        $this->roles = $DB->get_records_sql($sql, $params);
 
     }
 
@@ -100,7 +101,7 @@ class rolescapabilities_table extends capability_table_base {
         foreach ($this->roles as $rid => $r) {
             $th .= "<th class=\"role\">{$r->name}</th>";
         }
-        $th .= '<th>'.get_string('risks').'</th>';
+        $th .= '<th>'.get_string('risks', 'role').'</th>';
         echo $th;
     }
 

@@ -7,5 +7,7 @@ $string['no_roles_selected'] = 'Nenhum papel foi selecionado. Por favor, selecio
 $string['repeat_each'] = 'Repetir o cabeçalho a cada N registros';
 $string['rolescapabilities'] = 'Permissões dos papéis';
 $string['rolescapabilities:view'] = 'Visualizar relatório administrativo de Permissões dos papéis';
+$string['pluginname'] = 'Permissões dos papéis';
+$string['no_roles_available'] = 'Nenhum papel disponível';
 
 ?>

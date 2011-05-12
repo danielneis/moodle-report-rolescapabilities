@@ -6,5 +6,8 @@ $string['legend_title'] = 'Farb Legende';
 $string['no_roles_selected'] = 'Keine Rolle ausgewählt. Wählen Sie bitte mindestens eine Rolle aus um Kompentenzen anzuzeigen.';
 $string['repeat_each'] = 'Kopfzeile alle N Einträge wiederholen';
 $string['rolescapabilities'] = 'Rollen Kompetenzen';
+$string['pluginname'] = 'Rollen Kompetenzen';
+$string['rolescapabilities:view'] = 'Bericht über Rollen Kompetenzen sehen';
+$string['no_roles_available'] = 'keine Rollen erhältlich';
 
 ?>

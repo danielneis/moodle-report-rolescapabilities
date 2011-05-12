@@ -7,5 +7,7 @@ $string['no_roles_selected'] = 'No roles was selected. Please select at least on
 $string['repeat_each'] = 'Repeat the header each N entries';
 $string['rolescapabilities'] = 'Roles\'s capabilities';
 $string['rolescapabilities:view'] = 'View Admin Report Roles\'s capabilities';
+$string['pluginname'] = 'Roles\'s capabilities';
+$string['no_roles_available'] = 'No roles available';
 
 ?>

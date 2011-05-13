@@ -4,7 +4,7 @@ require_once(dirname(__FILE__).'/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/admin/roles/lib.php');
 
-$roles_ids = optional_param('roles_ids');
+$roles_ids = optional_param('roles_ids', '', PARAM_INT);
 $repeat_each = optional_param('repeat_each', 20, PARAM_INT);
 
 admin_externalpage_setup('reportrolescapabilities');

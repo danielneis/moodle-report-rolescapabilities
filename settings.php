@@ -15,5 +15,5 @@ $ADMIN->add('server', $temp);
 $ADMIN->add('reports',
             new admin_externalpage('reportrolescapabilities',
                                    get_string('rolescapabilities', 'report_rolescapabilities'),
-                                   "{$CFG->wwwroot}/{$CFG->admin}/report/rolescapabilities/index.php",
+                                   "{$CFG->wwwroot}/report/rolescapabilities/index.php",
                                    'report/rolescapabilities:view'));

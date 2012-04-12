@@ -1,22 +1,30 @@
 <?php
 
-require_once(dirname(__FILE__).'/../../../config.php');
+/**
+ * Displays a color-coded view of roles's capabilities
+ *
+ * @package    report
+ * @subpackage log
+ * @copyright  2011 onwards Daniel Neis
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/admin/roles/lib.php');
 
-$roles_ids = optional_param('roles_ids', '', PARAM_INT);
-$repeat_each = optional_param('repeat_each', 20, PARAM_INT);
+require_login(get_site());
 
-admin_externalpage_setup('reportrolescapabilities');
-
-$PAGE->requires->css('/admin/report/rolescapabilities/styles.css');
+$PAGE->set_url('/report/rolescapabilities/index.php');
+$PAGE->set_pagelayout('report');
+$PAGE->requires->css('/report/rolescapabilities/styles.css');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('rolescapabilities', 'report_rolescapabilities'));
 
-echo '<div id="legend_container">',
+echo '<div id="legendcontainer">',
        '<h3>', get_string('legend_title', 'report_rolescapabilities'), '</h3>',
        '<dl id="legend">',
-         '<dt><span class="not_set">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></dt>',
+         '<dt><span class="notset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></dt>',
          '<dd>', get_string('notset', 'role'), '</dd>',
 
          '<dt><span class="allow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></dt>',
@@ -37,11 +45,15 @@ $sql = "SELECT id, name
       ORDER BY sortorder ASC";
 $available_roles = $DB->get_records_sql($sql, $params);
 
+if ($data = data_submitted()) {
+    $roles_ids = $data->roles_ids;
+} else {
+    $roles_ids = array();
+}
 
-echo '<div id="options_container">',
+echo '<div id="optionscontainer">',
      '<form action="index.php" method="post">',
      '<select multiple="multiple" name="roles_ids[]" size="10" id="roles_ids">';
-
 foreach ($available_roles as $rid => $r) {
     $selected = '';
     if (!empty($roles_ids)) {
@@ -49,13 +61,8 @@ foreach ($available_roles as $rid => $r) {
     }
     echo "<option value=\"{$rid}\" {$selected}>{$r->name}</option>";
 }
-
 echo '</select>',
-     '<p>',
-         '<label for="repeat_each">', get_string('repeat_each', 'report_rolescapabilities'), '</label>',
-         '<input type="text" id="repeat_each" name="repeat_each" value="', $repeat_each, '" size="2" />',
-         '<input type="submit" value="', get_string('show'), '" />',
-     '</p>',
+     '<p><input type="submit" value="', get_string('show'), '" /></p>',
      '</form>',
      '</div>';
 
@@ -65,7 +72,7 @@ if (empty($available_roles)) {
 
 class rolescapabilities_table extends capability_table_base {
 
-    public function __construct($context, $id, $roleids, $repeat_each) {
+    public function __construct($context, $id, $roleids) {
         global $DB, $CFG;
 
         parent::__construct($context, $id);
@@ -84,8 +91,6 @@ class rolescapabilities_table extends capability_table_base {
         foreach ($this->allpermissions as $permname) {
             $this->strperms[$permname] =  get_string($permname, 'role');
         }
-
-        $this->repeat_each = $repeat_each;
 
         list($usql, $params) = $DB->get_in_or_equal($roleids);
         $sql = "SELECT id,shortname, name
@@ -119,9 +124,9 @@ class rolescapabilities_table extends capability_table_base {
                                                      'capability' => $capability->name),
                                                 '', 'capability,permission');
             if ($permission) {
-                echo '<td class="role cap_', $permission[$capability->name] , '"></td>';
+                echo '<td class="role cap', $permission[$capability->name] , '"></td>';
             } else {
-                echo '<td class="role cap_not_set"></td>';
+                echo '<td class="role capnotset"></td>';
             }
         }
         echo '<td>';
@@ -152,15 +157,10 @@ class rolescapabilities_table extends capability_table_base {
     }
 }
 
-
 if (empty($roles_ids)) {
     echo $OUTPUT->heading(get_string('no_roles_selected', 'report_rolescapabilities'));
 } else {
-
-    $report = new rolescapabilities_table(get_context_instance(CONTEXT_SYSTEM), 0, $roles_ids, $repeat_each);
+    $report = new rolescapabilities_table(get_context_instance(CONTEXT_SYSTEM), 0, $roles_ids);
     $report->display();
 }
-
 echo $OUTPUT->footer();
-
-?>

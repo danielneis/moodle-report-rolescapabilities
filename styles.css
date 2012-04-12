@@ -1,65 +1,68 @@
-#page-admin-report-rolescapabilities-index h2.main {
-    clear: both;
-}
-
-#page-admin-report-rolescapabilities-index #legend_container {
+#page #legendcontainer {
     float: left;
     width: 35%;
 }
 
-#page-admin-report-rolescapabilities-index #options_container {
+#page #optionscontainer {
     float: right;
     width : 60%;
 }
 
-#page-admin-report-rolescapabilities-index #options_container #repeat_each {
-    display: inline;
-    margin-left: 0.5em;
-    margin-right: 1em;
-}
-
-#page-admin-report-rolescapabilities-index #legend dt {
+#page  #legend dt {
     float: left;
     margin-right: 10px;
 }
 
-#page-admin-report-rolescapabilities-index #legend dd {
+#page  #legend dd {
     margin-bottom: 5px;
 }
 
-#page-admin-report-rolescapabilities-index #legend dt span {
+#page  #legend dt span {
     border: 1px solid black;
 }
 
-#page-admin-report-rolescapabilities-index .rolecap {
+#page .rolecap {
     clear: both;
     margin-top: 1em;
     border: 1px solid black;
     border-collapse: collapse;
+    text-align: left;
+    width: 100%;
 }
 
-#page-admin-report-rolescapabilities-index .rolecap th,
-#page-admin-report-rolescapabilities-index .rolecap td {
+
+#page  .rolecap th,
+#page  .rolecap td {
     border: 1px solid black;
 }
 
-#page-admin-report-rolescapabilities-index .rolecap td.cap_not_set,
-#page-admin-report-rolescapabilities-index #legend dt span.not_set {
+#page  .rolecap td.capnotset,
+#page  #legend dt span.notset {
     background-color: white;
-    text-align: center;
 }
 
-#page-admin-report-rolescapabilities-index .rolecap td.cap_1,
-#page-admin-report-rolescapabilities-index #legend dt span.allow {
+#page .rolecap td.cap1,
+#page #legend dt span.allow {
     background-color: green;
 }
 
-#page-admin-report-rolescapabilities-index .rolecap td.cap_-1,
-#page-admin-report-rolescapabilities-index #legend dt span.prevent {
+#page .rolecap td.cap-1,
+#page #legend dt span.prevent {
     background-color: yellow;
 }
 
-#page-admin-report-rolescapabilities-index .rolecap td.cap_-1000,
-#page-admin-report-rolescapabilities-index #legend dt span.deny {
+#page .rolecap td.cap-1000,
+#page #legend dt span.deny {
     background-color: red;
+}
+
+#page span.cap-desc a {
+display: block;
+text-align: left;
+}
+#page span.cap-desc span {
+text-align: left;
+}
+#page span.cap-name {
+display: block;
 }

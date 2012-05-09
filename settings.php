@@ -1,4 +1,9 @@
 <?php
+$ADMIN->add('reports',
+            new admin_externalpage('reportrolescapabilities',
+                                   get_string('rolescapabilities', 'report_rolescapabilities'),
+                                   "{$CFG->wwwroot}/report/rolescapabilities/index.php",
+                                   'report/rolescapabilities:view'));
 
 $records = $DB->get_records('role',  array(), 'sortorder ASC', 'id,name');
 $roles = array();
@@ -10,10 +15,4 @@ $temp->add(new admin_setting_configmultiselect('report_rolescapabilities_availab
                                                get_string('config_available_roles', 'report_rolescapabilities'),
                                                get_string('desc_available_roles', 'report_rolescapabilities'),
                                                null, $roles));
-$ADMIN->add('server', $temp);
-
-$ADMIN->add('reports',
-            new admin_externalpage('reportrolescapabilities',
-                                   get_string('rolescapabilities', 'report_rolescapabilities'),
-                                   "{$CFG->wwwroot}/report/rolescapabilities/index.php",
-                                   'report/rolescapabilities:view'));
+$settings = $temp;

@@ -15,9 +15,10 @@ require_once($CFG->dirroot.'/admin/roles/lib.php');
 
 require_login(get_site());
 
-$PAGE->set_url('/report/rolescapabilities/index.php');
-$PAGE->set_pagelayout('report');
+$url = new moodle_url('/report/rolescapabilities/index.php');
+$PAGE->set_url($url);
 $PAGE->requires->css('/report/rolescapabilities/styles.css');
+$PAGE->set_title(get_string('rolescapabilities', 'report_rolescapabilities'));
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('rolescapabilities', 'report_rolescapabilities'));
 

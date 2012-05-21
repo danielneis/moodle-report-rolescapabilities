@@ -30,7 +30,6 @@
     width: 100%;
 }
 
-
 #page  .rolecap th,
 #page  .rolecap td {
     border: 1px solid black;
@@ -65,4 +64,8 @@ text-align: left;
 }
 #page span.cap-name {
 display: block;
+}
+#page h2.main {
+clear: both;
+float:none;
 }

@@ -19,6 +19,9 @@ $url = new moodle_url('/report/rolescapabilities/index.php');
 $PAGE->set_url($url);
 $PAGE->requires->css('/report/rolescapabilities/styles.css');
 $PAGE->set_title(get_string('rolescapabilities', 'report_rolescapabilities'));
+$PAGE->set_heading(get_string('rolescapabilities', 'report_rolescapabilities'));
+$PAGE->set_pagelayout('report');
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('rolescapabilities', 'report_rolescapabilities'));
 

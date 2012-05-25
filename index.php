@@ -63,7 +63,7 @@ foreach ($available_roles as $rid => $r) {
     if (!empty($roles_ids)) {
         $selected = in_array($rid, $roles_ids) ? 'selected="selected"' : '';
     }
-    echo "<option value=\"{$rid}\" {$selected}>{$r->name}</option>";
+    echo "<option value=\"{$rid}\" {$selected}>", format_string($r->name), "</option>";
 }
 echo '</select>',
      '<p><input type="submit" value="', get_string('show'), '" /></p>',
@@ -108,7 +108,7 @@ class rolescapabilities_table extends capability_table_base {
     protected function add_header_cells() {
         $th = '';
         foreach ($this->roles as $rid => $r) {
-            $th .= "<th class=\"role\">{$r->name}</th>";
+            $th .= "<th class=\"role\">".format_string($r->name)."</th>";
         }
         $th .= '<th>'.get_string('risks', 'role').'</th>';
         echo $th;

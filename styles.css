@@ -69,3 +69,7 @@
 .path-report-rolescapabilities span.cap-name {
     display: block;
 }
+.path-report-rolescapabilities h2.main {
+    clear: both;
+    float: none;
+}

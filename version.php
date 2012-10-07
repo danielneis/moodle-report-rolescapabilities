@@ -24,9 +24,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version  = 2011100600;
-$plugin->release  = 0.1;
-$plugin->requires = 2010112400;
+$plugin->version  = 2012070500.00;
+$plugin->release  = 0.2;
+$plugin->requires = 2012062501.07;
+$plugin->branch   = 'MOODLE_23_STABLE';
 $plugin->maturity = MATURITY_STABLE;
 
 ?>

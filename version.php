@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Displays a color-coded view of roles's capabilities
+ * Displays a color-coded view of roles' capabilities
  *
  * @package    report
  * @subpackage rolescapabilities

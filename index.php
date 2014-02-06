@@ -41,6 +41,7 @@ $PAGE->set_pagelayout('report');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('rolescapabilities', 'report_rolescapabilities'));
 
+echo '<div id="topcontainer">';
 echo '<div id="legendcontainer">',
        '<h3>', get_string('legend_title', 'report_rolescapabilities'), '</h3>',
        '<dl id="legend">',
@@ -58,12 +59,14 @@ echo '<div id="legendcontainer">',
        '</dl>',
      '</div>';
 
-list($usql, $params) = $DB->get_in_or_equal(explode(',',$CFG->report_rolescapabilities_available_roles));
-$sql = "SELECT id, name
-          FROM {role}
-         WHERE id $usql
-      ORDER BY sortorder ASC";
-$available_roles = $DB->get_records_sql($sql, $params);
+$available_role_ids = explode(',', get_config('report_rolescapabilities', 'available_roles'));
+$available_roles = array();
+$roles = role_get_names();
+foreach ($roles as $r) {
+    if (in_array($r->id, $available_role_ids)) {
+        $available_roles[$r->id] = $r->localname;
+    }
+}
 
 if ($data = data_submitted()) {
     $roles_ids = $data->roles_ids;
@@ -79,18 +82,19 @@ foreach ($available_roles as $rid => $r) {
     if (!empty($roles_ids)) {
         $selected = in_array($rid, $roles_ids) ? 'selected="selected"' : '';
     }
-    echo "<option value=\"{$rid}\" {$selected}>", format_string($r->name), "</option>";
+    echo "<option value=\"{$rid}\" {$selected}>", $r, "</option>";
 }
 echo '</select>',
      '<p><input type="submit" value="', get_string('show'), '" /></p>',
      '</form>',
      '</div>';
+echo '</div>';
 
 if (empty($available_roles)) {
     echo $OUTPUT->heading(get_string('no_roles_available', 'report_rolescapabilities'));
 }
 
-class rolescapabilities_table extends capability_table_base {
+class rolescapabilities_table extends core_role_capability_table_base {
 
     public function __construct($context, $id, $roleids) {
         global $DB, $CFG;
@@ -112,19 +116,21 @@ class rolescapabilities_table extends capability_table_base {
             $this->strperms[$permname] =  get_string($permname, 'role');
         }
 
-        list($usql, $params) = $DB->get_in_or_equal($roleids);
-        $sql = "SELECT id,shortname, name
-                  FROM {role}
-                 WHERE id {$usql}
-              ORDER BY sortorder";
-        $this->roles = $DB->get_records_sql($sql, $params);
+        $available_role_ids = explode(',', get_config('report_rolescapabilities', 'available_roles'));
+        $available_roles = array();
+        $roles = role_get_names();
+        foreach ($roleids as $r) {
+            if (in_array($r, $available_role_ids)) {
+                $this->roles[$r] = $roles[$r]->localname;
+            }
+        }
 
     }
 
     protected function add_header_cells() {
         $th = '';
         foreach ($this->roles as $rid => $r) {
-            $th .= "<th class=\"role\">".format_string($r->name)."</th>";
+            $th .= "<th class=\"role\">".$r."</th>";
         }
         $th .= '<th>'.get_string('risks', 'role').'</th>';
         echo $th;
@@ -137,9 +143,9 @@ class rolescapabilities_table extends capability_table_base {
     protected function add_row_cells($capability) {
         global $DB;
 
-        foreach ($this->roles as $role) {
+        foreach ($this->roles as $rid => $role) {
             $permission = $DB->get_records_menu('role_capabilities',
-                                                array('roleid' => $role->id,
+                                                array('roleid' => $rid,
                                                      'contextid' => $this->context->id,
                                                      'capability' => $capability->name),
                                                 '', 'capability,permission');
@@ -192,7 +198,7 @@ class rolescapabilities_table extends capability_table_base {
 if (empty($roles_ids)) {
     echo $OUTPUT->heading(get_string('no_roles_selected', 'report_rolescapabilities'));
 } else {
-    $report = new rolescapabilities_table(get_context_instance(CONTEXT_SYSTEM), 0, $roles_ids);
+    $report = new rolescapabilities_table(context_system::instance(), 0, $roles_ids);
     $report->display();
 }
 echo $OUTPUT->footer();

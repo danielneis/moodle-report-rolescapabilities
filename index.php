@@ -48,8 +48,14 @@ echo '<div id="legendcontainer">',
          '<dt><span class="notset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></dt>',
          '<dd>', get_string('notset', 'role'), '</dd>',
 
+         '<dt><span class="notsetdef">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></dt>',
+         '<dd>', get_string('notset', 'role'), ' ' , get_string('allowed_authenticated_user', 'report_rolescapabilities'), '</dd>',
+
          '<dt><span class="allow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></dt>',
          '<dd>', get_string('allow', 'role'), '</dd>',
+
+         '<dt><span class="allowdef">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></dt>',
+         '<dd>', get_string('allow', 'role'), ' ', get_string('duplicated_authenticated_user', 'report_rolescapabilities')  , '</dd>',
 
          '<dt><span class="prevent">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></dt>',
          '<dd>', get_string('prevent', 'role'), '</dd>',
@@ -125,10 +131,19 @@ class rolescapabilities_table extends core_role_capability_table_base {
             }
         }
 
+        $context = context_system::instance();
+        $has_cap = has_capability('moodle/role:manage', $context);
+
+        $this->show_edit_link = $has_cap && $DB->record_exists('config_plugins',
+                                                               array('plugin' => 'tool_editrolesbycap',
+                                                                     'name' => 'version'));
     }
 
     protected function add_header_cells() {
         $th = '';
+        if ($this->show_edit_link) {
+            $th .= "<th class='edit'></th>";
+        }
         foreach ($this->roles as $rid => $r) {
             $th .= "<th class=\"role\">".$r."</th>";
         }
@@ -137,11 +152,31 @@ class rolescapabilities_table extends core_role_capability_table_base {
     }
 
     protected function num_extra_columns() {
-        return sizeof($this->roles) + 1;
+        if ($this->show_edit_link) {
+            return sizeof($this->roles) + 2;
+        } else {
+            return sizeof($this->roles) + 1;
+        }
     }
 
     protected function add_row_cells($capability) {
-        global $DB;
+        global $DB, $OUTPUT;
+
+        $authuser_roleid = $DB->get_field('role', 'id', array('shortname'=>'user'));
+        $perm_authuser = $DB->get_records_menu('role_capabilities',
+                                            array('roleid' => $authuser_roleid,
+                                                 'contextid' => $this->context->id,
+                                                 'capability' => $capability->name),
+                                            '', 'capability,permission');
+        $perm_default = $perm_authuser ? 'def' : '';
+        if ($this->show_edit_link) {
+            echo '<td>',
+                 html_writer::link(new moodle_url('/admin/tool/editrolesbycap/index.php?cap=' . urlencode($capability->name)),
+                                   html_writer::empty_tag('img', array('class' => 'iconsmall',
+                                                                       'alt' => get_string('update'),
+                                                                       'src' => $OUTPUT->pix_url('i/edit'))));
+                 '</td>';
+        }
 
         foreach ($this->roles as $rid => $role) {
             $permission = $DB->get_records_menu('role_capabilities',
@@ -150,21 +185,27 @@ class rolescapabilities_table extends core_role_capability_table_base {
                                                      'capability' => $capability->name),
                                                 '', 'capability,permission');
             if ($permission) {
-                echo '<td class="role cap', $permission[$capability->name] , '">';
+                echo '<td class="role cap', $perm_default, $permission[$capability->name], '">';
+                $str = '';
                 switch($permission[$capability->name]) {
-                    case CAP_ALLOW: 
-                        echo get_string('allow', 'role');
+                    case CAP_ALLOW:
+                        $str = get_string('allow', 'role');
                         break;
-                    case CAP_PREVENT: 
-                        echo get_string('prevent', 'role');
+                    case CAP_PREVENT:
+                        $str = get_string('prevent', 'role');
                         break;
-                    case CAP_PROHIBIT: 
-                        echo get_string('prohibit', 'role');
+                    case CAP_PROHIBIT:
+                        $str = get_string('prohibit', 'role');
                         break;
-                }                
+                }
+                echo $str;
                 echo '</td>';
             } else {
-                echo '<td class="role capnotset"></td>';
+                if($perm_authuser) {
+                    echo '<td class="role capnotsetdef"></td>';
+                } else {
+                    echo '<td class="role capnotset"></td>';
+                }
             }
         }
         echo '<td>';

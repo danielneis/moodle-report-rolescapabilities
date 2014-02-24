@@ -34,5 +34,5 @@ $string['rolescapabilities'] = 'Roles\'s capabilities';
 $string['rolescapabilities:view'] = 'View Admin Report Roles\'s capabilities';
 $string['pluginname'] = 'Roles\'s capabilities';
 $string['no_roles_available'] = 'No roles available';
-
-?>
+$string['allowed_authenticated_user'] = '(allowed by authenticated user role)';
+$string['duplicated_authenticated_user'] = '(duplicated in authenticated user role)';

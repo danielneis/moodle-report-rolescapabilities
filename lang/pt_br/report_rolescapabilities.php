@@ -34,5 +34,5 @@ $string['rolescapabilities'] = 'Permissões dos papéis';
 $string['rolescapabilities:view'] = 'Visualizar relatório administrativo de Permissões dos papéis';
 $string['pluginname'] = 'Permissões dos papéis';
 $string['no_roles_available'] = 'Nenhum papel disponível';
-
-?>
+$string['allowed_authenticated_user'] = '(permitido pelo papel \'Usuário autenticado\')';
+$string['duplicated_authenticated_user'] = '(duplicado no papel \'Usuário autenticado\')';

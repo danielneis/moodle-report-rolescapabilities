@@ -51,9 +51,19 @@
     background-color: white;
 }
 
+.path-report-rolescapabilities  .rolecap td.capnotsetdef,
+.path-report-rolescapabilities  #legend dt span.notsetdef {
+    background-color: PaleGreen;
+}
+
 .path-report-rolescapabilities .rolecap td.cap1,
 .path-report-rolescapabilities #legend dt span.allow {
     background-color: green;
+}
+
+.path-report-rolescapabilities .rolecap td.capdef1,
+.path-report-rolescapabilities #legend dt span.allowdef {
+    background-color: RoyalBlue;
 }
 
 .path-report-rolescapabilities .rolecap td.cap-1,

@@ -7,31 +7,31 @@ It is usefull to quick compare roles and assist on definitions of new roles.
 PRE-REQUISITES
 ==============
 
-This report is made to work on Moodle 2.2.x
+This report is made to work on Moodle 2.x (currently 2.6.x)
 
-QUICK INSTALL
+INSTALL
 =============
 
-1) move this directory into moodle/report/
-2) access your moodle as admnistrator
-3) follow instructions
-4) the report will be available at Settings block > Site administration > Reports > Roles's capabilities
+1) Make sure you have all the required versions.
+2) Download and unpack the module.
+3) Place the folder (eg "myreport") in the "report" subdirectory.
+4) Visit http://yoursite.com/admin to finish the installation
+5) the report will be available at Settings Block > Site administration > Reports > Roles' Capabilities
 
 CONTACT
 =======
 
-file an issue on github (https://github.com/danielneis/moodle-adminreport-rolescapabilities)
+Create a new issue at Moodle's Tracker (https://tracker.moodle.org/browse/CONTRIB/component/10595)
 or
-send and email to danielneis@gmail.com
+Send an email to danielneis@gmail.com
 
 TODO
 ====
 
 * Fix the names of the roles on top of the page when scroll down
 
-
 --
 
-Thanks for using!!!
+Thank you for using!!!
 
 Daniel Neis Araujo
